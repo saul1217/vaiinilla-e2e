@@ -36,3 +36,15 @@ Reglas para flujos: solo en usagi-pruebas, encender banderas solo ahí y restaur
 
 - `e2e.yml`: corre en push/PR a `main` y `develop`. Secreto: `QA_FIREBASE_DEV_PASSWORD`.
 - `claude.yml`: menciona `@claude` en un issue o comentario; trabaja sobre `develop`. Secreto: `CLAUDE_CODE_OAUTH_TOKEN`.
+
+## Suites (develop, negocio usagi-pruebas)
+
+| carpeta | qué prueba |
+| --- | --- |
+| `publico/` | Landing: 11 rutas sin pantalla blanca ni errores JS, sin enlaces a `vaiinilla.app` de producción; menú de usagi-pruebas |
+| `staff/` | Login admin/caja/cocina y recorrido de las pantallas de `/app/*` por rol |
+| `pedidos/` | Pedido mixto: preparando → listo → entrega bloqueada (409 `ORDER_PAYMENT_PENDING`) → cobro → entregado |
+| `caja/` | Sesión de caja activa (la abre si falta), cobro inmediato + cancelación, doble cancelación rechazada |
+| `domicilio/` | Enciende `reparto_activo` y `permite_contra_entrega` solo en usagi-pruebas, pago en la puerta, cancelación → devolución pendiente; apaga banderas en `finally`. Documenta B4 (tope de intentos del código) |
+
+Secretos: `QA_FIREBASE_DEV_PASSWORD` (staff) y `QA_CLIENTE_EMAIL`/`QA_CLIENTE_PASSWORD` (cliente para domicilio). Sin ellos, los tests se saltan.
