@@ -58,13 +58,21 @@ export class Api {
 }
 
 /** Login de staff contra la API de develop, siempre en el negocio de prueba. */
+const ROL_API: Record<Rol, string> = { admin: 'admin', caja: 'cajero', cocina: 'cocina' };
 export async function apiStaff(rol: Rol): Promise<Api> {
-  const idToken = await firebaseIdToken(CUENTAS[rol]!);
+  return apiStaffCon(CUENTAS[rol]!, PASSWORD!, NEGOCIO_PRUEBA, ROL_API[rol]);
+}
+
+/** Login de cualquier cuenta de staff en un negocio (slug) y rol API dados. Solo develop. */
+export async function apiStaffCon(email: string, password: string, slug: string, rolApi: string): Promise<Api> {
+  const idToken = await firebaseIdToken(email, password);
   const h = { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' };
   const acc: any = await (await fetch(`${API_URL}/sesiones/accesos`, { headers: h })).json();
   const lista: any[] = acc?.data ?? [];
-  const m = lista.find((a) => JSON.stringify(a).includes(NEGOCIO_PRUEBA)) ;
-  if (!m) throw new Error(`${rol} no tiene acceso a ${NEGOCIO_PRUEBA}`);
+  const delNegocio = lista.filter((a) => (a.establecimiento?.slug ?? '') === slug || JSON.stringify(a).includes(`"${slug}"`));
+  const m = delNegocio.find((a) => a.rol === rolApi) ?? delNegocio[0];
+  if (!m) throw new Error(`${rolApi} no tiene acceso a ${slug}`);
+  const rol = rolApi;
   const r = await fetch(`${API_URL}/sesiones/contexto`, { method: 'POST', headers: h, body: JSON.stringify({ membresia_id: m.membresia_id ?? m.id }) });
   const j: any = await r.json();
   if (!r.ok) throw new Error(`contexto ${rol}: ${r.status} ${j?.error?.code}`);

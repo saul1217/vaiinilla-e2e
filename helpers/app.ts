@@ -27,3 +27,16 @@ export async function login(page: Page, rol: Rol) {
   await page.getByRole('button', { name: 'Iniciar sesión' }).click();
   await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toHaveCount(0, { timeout: 20_000 });
 }
+
+const ETIQUETA_ROL: Record<Rol, RegExp> = { admin: /Admin/i, caja: /Caja|Cajer/i, cocina: /Cocina/i };
+export const NEGOCIO_UI = process.env.QA_NEGOCIO_NOMBRE ?? 'USAGI (pruebas)';
+
+/** Login + elegir la membresía de usagi-pruebas con ese rol (pantalla /accesos). */
+export async function entrar(page: Page, rol: Rol) {
+  await login(page, rol);
+  if (/\/accesos/.test(page.url()) || (await page.getByText('¿Dónde vas a trabajar?').count())) {
+    const btn = page.getByRole('button').filter({ hasText: NEGOCIO_UI }).filter({ hasText: ETIQUETA_ROL[rol] }).first();
+    await btn.click();
+  }
+  await expect(page).toHaveURL(/\/app/, { timeout: 20_000 });
+}

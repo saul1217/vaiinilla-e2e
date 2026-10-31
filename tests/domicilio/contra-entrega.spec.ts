@@ -6,7 +6,7 @@ test.describe.configure({ mode: 'serial' });
 
 const FLAGS = ['reparto_activo', 'permite_contra_entrega'] as const;
 
-// Solo usagi-pruebas. Enciende las banderas y las deja en false en el finally.
+// Solo usagi-pruebas. Enciende las banderas y en el finally restaura el valor EXACTO que tenían antes.
 // El personal no puede crear pedidos a domicilio (403), así que hace falta un cliente verificado:
 // QA_CLIENTE_EMAIL / QA_CLIENTE_PASSWORD. Sin ellos se salta.
 test('domicilio: pago en la puerta y cancelar después va a devoluciones (no al cajón)', async () => {
@@ -15,6 +15,7 @@ test('domicilio: pago en la puerta y cancelar después va a devoluciones (no al 
   const admin = await apiStaff('admin');
   const conf = await admin.get('/establecimiento/configuracion');
   expect(conf.data?.tienda_url ?? '').toContain(NEGOCIO_PRUEBA); // guarda: nunca otro negocio
+  const previo = Object.fromEntries(FLAGS.map((k) => [k, conf.data[k] === true]));
 
   try {
     const on = await admin.patch('/establecimiento/configuracion', { reparto_activo: true, permite_contra_entrega: true });
@@ -53,7 +54,9 @@ test('domicilio: pago en la puerta y cancelar después va a devoluciones (no al 
     const devs = await (await apiStaff('caja')).get('/devoluciones');
     expect(JSON.stringify(devs.data)).toContain(id);
   } finally {
-    const off = await admin.patch('/establecimiento/configuracion', { reparto_activo: false, permite_contra_entrega: false });
+    const off = await admin.patch('/establecimiento/configuracion', previo);
     expect(off.status, `no se pudieron restaurar ${FLAGS.join(', ')}`).toBe(200);
+    const fin = (await admin.get('/establecimiento/configuracion')).data;
+    for (const k of FLAGS) expect(fin[k], `${k} restaurada`).toBe(previo[k]);
   }
 });

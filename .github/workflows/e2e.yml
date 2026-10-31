@@ -4,7 +4,7 @@ on:
   pull_request: { branches: [main, develop] }
   workflow_dispatch:
 permissions: { contents: read }
-# Un solo run a la vez: las pruebas de domicilio prenden/apagan banderas en usagi-pruebas.
+# Un solo run a la vez: las pruebas de domicilio prenden banderas en usagi-pruebas y restauran su valor previo.
 concurrency: { group: e2e-develop, cancel-in-progress: false }
 jobs:
   playwright:
@@ -20,6 +20,8 @@ jobs:
           QA_FIREBASE_DEV_PASSWORD: ${{ secrets.QA_FIREBASE_DEV_PASSWORD }}
           QA_CLIENTE_EMAIL: ${{ secrets.QA_CLIENTE_EMAIL }}
           QA_CLIENTE_PASSWORD: ${{ secrets.QA_CLIENTE_PASSWORD }}
+          OTRO_ADMIN_EMAIL: ${{ secrets.OTRO_ADMIN_EMAIL }}
+          OTRO_ADMIN_PASSWORD: ${{ secrets.OTRO_ADMIN_PASSWORD }}
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: playwright-report, path: playwright-report, retention-days: 7 }
