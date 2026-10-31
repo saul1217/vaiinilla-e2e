@@ -19,6 +19,8 @@ export default defineConfig({
   use: { trace: 'retain-on-failure', screenshot: 'only-on-failure', ...devices['Desktop Chrome'] },
   projects: [
     { name: 'publico', testMatch: /publico\/.*\.spec\.ts/, use: { baseURL: LANDING_URL } },
-    { name: 'staff', testMatch: /(staff|pedidos|caja|domicilio|seguridad|regresiones)\/.*\.spec\.ts/, use: { baseURL: STAFF_URL } },
+    { name: 'staff', testMatch: /(staff|pedidos|caja|domicilio|seguridad|regresiones|pagos|wallet|reservas)\/.*\.spec\.ts/, use: { baseURL: STAFF_URL } },
+    // Cambia barra_prepara del negocio: corre al final, sola, para no interferir con otros pedidos.
+    { name: 'banderas', testMatch: /cocina\/.*\.spec\.ts/, dependencies: ['staff'], use: { baseURL: STAFF_URL } },
   ],
 });
