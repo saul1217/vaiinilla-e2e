@@ -62,7 +62,8 @@ test('ningún bundle JS de develop trae URLs de producción', async ({ page }) =
   test.info().annotations.push({ type: 'prod-urls', description: [...new Set(hits)].slice(0, 10).join(' ') || 'ninguna' });
   // Conocido: el hotfix de landing #116/#117 deja https://app.vaiinilla.app como fallback de VITE_STAFF_APP_URL.
   // Los enlaces reales de develop no lo usan (ver landing.spec). Cualquier otra URL de producción falla.
-  const CONOCIDAS = new Set(['https://app.vaiinilla.app']);
+  // www.vaiinilla.app: canonical/SEO intencional (landing #144); develop lleva noindex por host y VERCEL_ENV.
+  const CONOCIDAS = new Set(['https://app.vaiinilla.app', 'https://www.vaiinilla.app']);
   expect([...new Set(hits)].filter((h) => !CONOCIDAS.has(h)), 'URLs de producción en el bundle de develop').toEqual([]);
 });
 
