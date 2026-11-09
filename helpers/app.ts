@@ -14,9 +14,9 @@ export function capturarErrores(page: Page) {
 
 export type Rol = 'admin' | 'caja' | 'cocina';
 export const CUENTAS: Record<Rol, string | undefined> = {
-  admin: process.env.QA_ADMIN_EMAIL ?? 'saul.admin@kakaowin.garden',
-  caja: process.env.QA_CAJA_EMAIL ?? 'saul.caja@kakaowin.garden',
-  cocina: process.env.QA_COCINA_EMAIL ?? 'saul.cocina@kakaowin.garden',
+  admin: process.env.QA_ADMIN_EMAIL,
+  caja: process.env.QA_CAJA_EMAIL,
+  cocina: process.env.QA_COCINA_EMAIL,
 };
 export const PASSWORD = process.env.QA_FIREBASE_DEV_PASSWORD;
 

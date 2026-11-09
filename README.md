@@ -20,9 +20,9 @@ npm run test:publico
 npm run test:staff
 ```
 
-Cuentas (Firebase develop `vaiinilla-b3a70`, negocio usagi-pruebas), sobrescribibles con variables:
-`QA_ADMIN_EMAIL`, `QA_CAJA_EMAIL`, `QA_COCINA_EMAIL` (por defecto `saul.admin|caja|cocina@kakaowin.garden`).
-Sin `QA_FIREBASE_DEV_PASSWORD` las pruebas de login se saltan.
+Cuentas de staff (Firebase develop, negocio usagi-pruebas) vía variables de entorno / secrets de Actions:
+`QA_ADMIN_EMAIL`, `QA_CAJA_EMAIL`, `QA_COCINA_EMAIL` y `QA_FIREBASE_DEV_PASSWORD`.
+Sin `QA_FIREBASE_DEV_PASSWORD` (o sin los correos) las pruebas de login/staff se saltan o no corren.
 
 ## Estructura
 
@@ -63,8 +63,7 @@ Reglas para flujos: solo en usagi-pruebas, encender banderas solo ahí y restaur
 
 ## CI
 
-- `e2e.yml`: corre en push/PR a `main` y `develop`. Secretos: `QA_FIREBASE_DEV_PASSWORD`, `QA_CLIENTE_EMAIL/PASSWORD` (domicilio), `OTRO_ADMIN_EMAIL/PASSWORD` (IDOR, admin de ci-vaiinilla). Sin ellos esas pruebas se saltan.
-- `claude.yml`: menciona `@claude` en un issue o comentario; trabaja sobre `develop`. Secreto: `CLAUDE_CODE_OAUTH_TOKEN`.
+- `e2e.yml`: corre en push/PR a `main` y `develop`. Secretos: `QA_ADMIN_EMAIL`, `QA_CAJA_EMAIL`, `QA_COCINA_EMAIL`, `QA_FIREBASE_DEV_PASSWORD` (staff), `QA_CLIENTE_EMAIL/PASSWORD` (domicilio), `OTRO_ADMIN_EMAIL/PASSWORD` (IDOR, admin de ci-vaiinilla). Sin ellos esas pruebas se saltan. No sube artifacts (repo público).
 
 ## Suites (develop, negocio usagi-pruebas)
 
@@ -76,4 +75,4 @@ Reglas para flujos: solo en usagi-pruebas, encender banderas solo ahí y restaur
 | `caja/` | Sesión de caja activa (la abre si falta), cobro inmediato + cancelación, doble cancelación rechazada |
 | `domicilio/` | Enciende `reparto_activo` y `permite_contra_entrega` solo en usagi-pruebas, pago en la puerta, cancelación → devolución pendiente; apaga banderas en `finally`. Documenta B4 (tope de intentos del código) |
 
-Secretos: `QA_FIREBASE_DEV_PASSWORD` (staff) y `QA_CLIENTE_EMAIL`/`QA_CLIENTE_PASSWORD` (cliente para domicilio). Sin ellos, los tests se saltan.
+Secretos: `QA_ADMIN_EMAIL`/`QA_CAJA_EMAIL`/`QA_COCINA_EMAIL` + `QA_FIREBASE_DEV_PASSWORD` (staff) y `QA_CLIENTE_EMAIL`/`QA_CLIENTE_PASSWORD` (cliente para domicilio). Sin ellos, los tests se saltan.

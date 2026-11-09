@@ -16,7 +16,7 @@ export default defineConfig({
   timeout: 60_000,
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
-  use: { trace: 'retain-on-failure', screenshot: 'only-on-failure', ...devices['Desktop Chrome'] },
+  use: { trace: 'off', screenshot: 'off', video: 'off', ...devices['Desktop Chrome'] },
   projects: [
     { name: 'publico', testMatch: /publico\/.*\.spec\.ts/, use: { baseURL: LANDING_URL } },
     { name: 'staff', testMatch: /(staff|pedidos|caja|domicilio|seguridad|regresiones|pagos|wallet|reservas)\/.*\.spec\.ts/, use: { baseURL: STAFF_URL } },
